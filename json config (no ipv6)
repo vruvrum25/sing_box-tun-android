@@ -2,59 +2,46 @@
   "log": {
     "level": "info"
   },
+  "dns": {
+    "servers": [
+      {
+        "address": "local"
+      }
+    ],
+    "strategy": "ipv4_only"
+  },
   "inbounds": [
-    {
-      "type": "mixed",
-      "tag": "lan-mixed",
-      "listen": "::",
-      "listen_port": 7890
-    },
     {
       "type": "tun",
       "tag": "tun-in",
-      "interface_name": "sing",
-      "mtu": 9000,
+      "interface_name": "tun0",
       "address": [
-        "172.18.0.1/30",
-        "fdfe:dcba:9876::1/126"
+        "172.19.0.1/30"
       ],
-      "auto_route": true,
-      "auto_redirect": true,
-      "strict_route": true,
-      "include_android_user": [
-        0,
-        10,
-        999
-      ],
+      "mtu": 1500,
       "stack": "mixed",
-      "include_package": [],
-      "exclude_package": []
-    },
-    {
-      "type": "redirect",
-      "tag": "redirect-in",
-      "listen": "::",
-      "listen_port": 9797
+      "auto_route": true,
+      "strict_route": true,
+      "auto_redirect": true
     }
   ],
   "outbounds": [
     {
       "type": "direct",
       "tag": "direct"
-    },
-    {
-      "type": "block",
-      "tag": "block"
     }
   ],
   "route": {
+    "auto_detect_interface": true,
     "rules": [
       {
-        "inbound": "lan-mixed",
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
+        "inbound": "tun-in",
         "outbound": "direct"
       }
-    ],
-    "final": "direct",
-    "auto_detect_interface": true
+    ]
   }
 }
